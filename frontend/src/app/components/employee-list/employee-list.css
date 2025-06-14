@@ -1,0 +1,20 @@
+.table {
+  margin-top: 20px;
+}
+
+.alert {
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.pagination {
+  margin-top: 20px;
+}
+
+.page-item.disabled .page-link {
+  cursor: not-allowed;
+}
+
+.page-link {
+  cursor: pointer;
+}
