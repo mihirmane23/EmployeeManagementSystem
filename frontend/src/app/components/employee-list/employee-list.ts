@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EmployeeService } from '../../services/employee';
 import { Employee } from '../../models/employee';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ApiResponse } from '../../models/api-response';
 import { FormsModule } from '@angular/forms';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-employee-list',
@@ -30,7 +31,7 @@ export class EmployeeList implements OnInit {
     customEnd: ''
   };
 
-  constructor(private employeeService: EmployeeService) { }
+  constructor(private employeeService: EmployeeService, private authService: Auth, private router: Router) { }
 
   ngOnInit(): void {
     this.fetchData();
@@ -63,6 +64,11 @@ export class EmployeeList implements OnInit {
     };
     this.currentPage = 1;
     this.fetchData();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 
   fetchData(): void {

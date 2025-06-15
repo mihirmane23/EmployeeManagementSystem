@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\SampleAngularProject\\EmployeeApi\\EmployeeApi.csproj": {}
+    "D:\\SampleAngularProject\\EmployeeManagementSystem\\EmployeeApi\\EmployeeApi.csproj": {}
   },
   "projects": {
-    "D:\\SampleAngularProject\\EmployeeApi\\EmployeeApi.csproj": {
+    "D:\\SampleAngularProject\\EmployeeManagementSystem\\EmployeeApi\\EmployeeApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\SampleAngularProject\\EmployeeApi\\EmployeeApi.csproj",
+        "projectUniqueName": "D:\\SampleAngularProject\\EmployeeManagementSystem\\EmployeeApi\\EmployeeApi.csproj",
         "projectName": "EmployeeApi",
-        "projectPath": "D:\\SampleAngularProject\\EmployeeApi\\EmployeeApi.csproj",
+        "projectPath": "D:\\SampleAngularProject\\EmployeeManagementSystem\\EmployeeApi\\EmployeeApi.csproj",
         "packagesPath": "C:\\Users\\mihir\\.nuget\\packages\\",
-        "outputPath": "D:\\SampleAngularProject\\EmployeeApi\\obj\\",
+        "outputPath": "D:\\SampleAngularProject\\EmployeeManagementSystem\\EmployeeApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mihir\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -44,13 +44,41 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.AspNetCore.Identity": {
+              "target": "Package",
+              "version": "[2.3.1, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.6, )"
             },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.12.0, )"
+            },
             "Npgsql": {
               "target": "Package",
               "version": "[9.0.3, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.12.0, )"
             }
           },
           "imports": [

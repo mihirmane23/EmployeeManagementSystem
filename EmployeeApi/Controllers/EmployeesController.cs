@@ -1,23 +1,29 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Npgsql;
 using EmployeeApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 
 namespace EmployeeApi.Controllers
 {
     
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EmployeesController : ControllerBase
     {
         private readonly string _connectionString;
+        private readonly ILogger<EmployeesController> _logger;
 
-        public EmployeesController(IConfiguration configuration)
+        public EmployeesController(IConfiguration configuration, ILogger<EmployeesController> logger)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new ArgumentNullException(nameof(configuration), "Connection string 'DefaultConnection' is missing.");
+            _logger = logger;
         }
         /*
         [HttpGet]
@@ -68,6 +74,9 @@ namespace EmployeeApi.Controllers
             {
                 return BadRequest("Page and perPage must be positive integers.");
             }
+
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            _logger.LogInformation("Fetching employees for user: {Email}, Page: {Page}, PerPage: {PerPage}", userEmail, page, perPage);
 
             var employees = new List<Employee>();
             int totalEntries;
@@ -150,14 +159,17 @@ namespace EmployeeApi.Controllers
                     Data = employees,
                     TotalEntries = totalEntries
                 };
+                _logger.LogInformation("Returning {Count} employees for user: {Email}", employees.Count, userEmail);
                 return Ok(response);
             }
             catch (NpgsqlException ex)
             {
+                _logger.LogError(ex, "Database error for user: {Email}", userEmail);
                 return StatusCode(500, $"Database error: {ex.Message}");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Internal server error for user: {Email}", userEmail);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
@@ -165,6 +177,9 @@ namespace EmployeeApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            _logger.LogInformation("Fetching employee ID: {Id} for user: {Email}", id, userEmail);
+
             try
             {
                 using (var connection = new NpgsqlConnection(_connectionString))
@@ -188,8 +203,10 @@ namespace EmployeeApi.Controllers
                                     EmpContactNo = reader.IsDBNull(5) ? null : reader.GetString(5),
                                     EmpHireDate = reader.GetDateTime(6)
                                 };
+                                _logger.LogInformation("Found employee ID: {Id} for user: {Email}", id, userEmail);
                                 return Ok(employee);
                             }
+                            _logger.LogWarning("Employee ID: {Id} not found for user: {Email}", id, userEmail);
                             return NotFound($"Employee with ID {id} not found.");
                         }
                     }
@@ -197,10 +214,12 @@ namespace EmployeeApi.Controllers
             }
             catch (NpgsqlException ex)
             {
+                _logger.LogError(ex, "Database error for user: {Email}, ID: {Id}", userEmail, id);
                 return StatusCode(500, $"Database error: {ex.Message}");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Internal server error for user: {Email}, ID: {Id}", userEmail, id);
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
