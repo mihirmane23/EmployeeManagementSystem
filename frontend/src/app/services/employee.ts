@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Employee } from '../models/employee';
 import { ApiResponse } from '../models/api-response';
+import { Auth } from './auth';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { ApiResponse } from '../models/api-response';
 export class EmployeeService {
   private apiUrl = 'http://localhost:5018/api/employees';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: Auth) { }
 
   getEmployees(page: number, perPage: number, filter?: any): Observable<ApiResponse> {
     let params = new HttpParams()
@@ -29,14 +30,23 @@ export class EmployeeService {
       }
     }
 
-    return this.http.get<ApiResponse>(this.apiUrl, { params });
+    const headers = this.authService.getAuthHeader();
+    console.log('Fetching employees with headers:', headers, 'params:', params.toString());
+    return this.http.get<ApiResponse>(this.apiUrl, { params, headers }).pipe(
+      catchError(this.handleError)
+    );
   }
 
   getEmployee(id: number): Observable<Employee> {
-    return this.http.get<Employee>(`${this.apiUrl}/${id}`).pipe(catchError(this.handleError));
+    const headers = this.authService.getAuthHeader();
+    console.log(`Fetching employee ${id} with headers:`, headers);
+    return this.http.get<Employee>(`${this.apiUrl}/${id}`, { headers }).pipe(
+      catchError(this.handleError)
+    );
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('API error:', error);
     let errorMessage = 'An unknown error occured!';
     if (error.status === 404) {
       errorMessage = error.error || 'Employee not found!';
